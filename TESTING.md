@@ -71,8 +71,12 @@ Never use `/mnt/JailHouse/VirtualMachines/FS25:/home/nobody/.fs25server`.
 
 ## TrueNAS Apps GUI cutover
 
-After the isolated test passes, use `docker-compose.truenas.yml` in the TrueNAS
-Custom App YAML editor. Stop the existing app before installing the replacement
-because the production template deliberately reuses its container name, ports,
-and datasets. Replace the image's `main` tag with the tested immutable
-`sha-<commit>` tag before considering the deployment final.
+Install `docker-compose.truenas-test.yml` through the TrueNAS Custom App YAML
+editor for the isolated test. It pulls the published image and uses only the
+test container, ports, and datasets documented above.
+
+After that test passes, use `docker-compose.truenas.yml` for cutover. Stop the
+existing app before installing the replacement because the production template
+deliberately reuses its container name, ports, and datasets. Replace the image's
+`main` tag with the tested immutable `sha-<commit>` tag before considering the
+deployment final.
