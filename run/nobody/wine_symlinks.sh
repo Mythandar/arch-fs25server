@@ -46,7 +46,8 @@ elif [ -L "$WINE_GAME_DIR" ]; then
   rm "$WINE_GAME_DIR"
   ln -s "$GAME_DIR" "$WINE_GAME_DIR"
 elif [ -e "$WINE_GAME_DIR" ]; then
-  echo -e "${RED}Error: A file or directory already exists at $WINE_GAME_DIR — cannot create symlink.${NOCOLOR}"
+  echo -e "${RED}Error: A real file or directory exists at $WINE_GAME_DIR; refusing to replace it. Move or migrate it before startup so the game mount can be linked safely.${NOCOLOR}"
+  exit 1
 else
   mkdir -p "$(dirname "$WINE_GAME_DIR")"
   ln -s "$GAME_DIR" "$WINE_GAME_DIR"
@@ -62,8 +63,9 @@ elif [ -L "$CONFIG_LINK_TARGET" ]; then
   echo -e "${RED}Warning: Repairing stale config symlink at $CONFIG_LINK_TARGET.${NOCOLOR}"
   rm "$CONFIG_LINK_TARGET"
   ln -s "$CONFIG_DIR" "$CONFIG_LINK_TARGET"
-elif [ -d "$CONFIG_LINK_TARGET" ]; then
-  echo -e "${RED}Warning: A real directory already exists at $CONFIG_LINK_TARGET, skipping symlink creation.${NOCOLOR}"
+elif [ -e "$CONFIG_LINK_TARGET" ]; then
+  echo -e "${RED}Error: A real file or directory exists at $CONFIG_LINK_TARGET; refusing to replace it. Move or migrate it before startup so /opt/fs25/config remains authoritative.${NOCOLOR}"
+  exit 1
 else
   mkdir -p "$(dirname "$CONFIG_LINK_TARGET")"
   ln -s "$CONFIG_DIR" "$CONFIG_LINK_TARGET"
