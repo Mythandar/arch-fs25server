@@ -33,7 +33,7 @@ services:
       - /mnt/Main/fs25-test/game:/opt/fs25/game
       - /mnt/Main/fs25-test/dlc:/opt/fs25/dlc
       - /mnt/Main/fs25-test/installer:/opt/fs25/installer
-      - /mnt/JailHouse/VirtualMachines/FS25-test:/home/nobody/.fs25server
+      - /mnt/JailHouse/VirtualMachines/FS25-test:/config
     ports:
       - 5901:5900/tcp
       - 6081:6080/tcp
