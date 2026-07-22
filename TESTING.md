@@ -68,3 +68,11 @@ The eventual production mount must be:
 ```
 
 Never use `/mnt/JailHouse/VirtualMachines/FS25:/home/nobody/.fs25server`.
+
+## TrueNAS Apps GUI cutover
+
+After the isolated test passes, use `docker-compose.truenas.yml` in the TrueNAS
+Custom App YAML editor. Stop the existing app before installing the replacement
+because the production template deliberately reuses its container name, ports,
+and datasets. Replace the image's `main` tag with the tested immutable
+`sha-<commit>` tag before considering the deployment final.
