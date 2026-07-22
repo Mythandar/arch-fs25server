@@ -48,7 +48,11 @@ if (!portOnly) {
     if (!pattern.test(config)) {
       throw new Error(`No ${elementName} element was found in ${configPath}`);
     }
-    config = config.replace(pattern, `$1${escapeXml(value)}$2`);
+    config = config.replace(
+      pattern,
+      (_match, openingTag, closingTag) =>
+        `${openingTag}${escapeXml(value)}${closingTag}`
+    );
   }
 }
 
