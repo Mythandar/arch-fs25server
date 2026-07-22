@@ -1,0 +1,47 @@
+# TrueNAS Custom App production template.
+# Replace every CHANGE_ME value in the TrueNAS YAML editor before deployment.
+# Do not run this beside the existing production app: it intentionally uses the
+# production container name, ports, and storage paths for eventual cutover.
+
+services:
+  arch-fs25server:
+    image: ghcr.io/mythandar/arch-fs25server:main
+    container_name: arch-fs25server
+    cap_add:
+      - SYS_NICE
+    environment:
+      - VNC_PASSWORD=CHANGE_ME_MINIMUM_6_CHARACTERS
+      - WEB_USERNAME=Mythandar
+      - WEB_PASSWORD=CHANGE_ME
+      - WEB_DARKMODE=true
+      - SERVER_NAME=GiggleTown
+      - SERVER_PASSWORD=CHANGE_ME
+      - SERVER_ADMIN=CHANGE_ME
+      - SERVER_PLAYERS=4
+      - SERVER_PORT=10823
+      - SERVER_REGION=en
+      - SERVER_MAP=MapUS
+      - SERVER_DIFFICULTY=3
+      - SERVER_PAUSE=2
+      - SERVER_SAVE_INTERVAL=180.000000
+      - SERVER_STATS_INTERVAL=31536000
+      - SERVER_CROSSPLAY=true
+      - AUTOSTART_SERVER=false
+      - ENABLE_STARTUP_SCRIPTS=no
+      - PUID=99
+      - PGID=100
+    ports:
+      - 5951:5900/tcp
+      - 6080:6080/tcp
+      - 7999:7999/tcp
+      - 10823:10823/tcp
+      - 10823:10823/udp
+    restart: unless-stopped
+    stop_grace_period: 2m
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /mnt/Main/fs25/config:/opt/fs25/config
+      - /mnt/Main/fs25/game:/opt/fs25/game
+      - /mnt/Main/fs25/dlc:/opt/fs25/dlc
+      - /mnt/Main/fs25/installer:/opt/fs25/installer
+      - /mnt/JailHouse/VirtualMachines/FS25:/config

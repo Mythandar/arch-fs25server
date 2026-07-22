@@ -24,6 +24,30 @@ Do not bind-mount host storage directly at `/home/nobody/.fs25server`. The
 Binhex initializer owns the `/config/home` to `/home/nobody` relationship; a
 nested mount conflicts with that initialization and can hide `.build/fs25`.
 
+## TrueNAS Custom App deployment
+
+The final server is deployed through the TrueNAS Apps GUI using
+[`docker-compose.truenas.yml`](docker-compose.truenas.yml). That file pulls a
+prebuilt image from GitHub Container Registry; TrueNAS does not need the source
+tree or a local `build:` context.
+
+The publishing workflow creates two image tags after every merge to `main`:
+
+- `ghcr.io/mythandar/arch-fs25server:main` for the newest build
+- `ghcr.io/mythandar/arch-fs25server:sha-<commit>` for an immutable build
+
+Use `main` only for the initial test. After a build passes acceptance testing,
+replace `main` in the TrueNAS YAML with its tested `sha-<commit>` tag.
+
+Before installing the YAML, replace all `CHANGE_ME` values in the TrueNAS editor.
+VNC passwords shorter than six characters are rejected by the image and result
+in unauthenticated VNC, so use at least six characters.
+
+The old `DISABLE_CHOWN`, `DISABLE_PERM_FIX`, and `SKIP_CHOWN` variables are not
+included because they did not disable the slow ownership pass. `UMASK=000` is
+also omitted; it grants write permission to every user and is not required for
+the `99:100` dataset ownership used here.
+
 Dedicated Farming Simulator 25 server running inside a docker image based on ArchLinux. 
 This project is hosted at https://github.com/wine-gameservers/arch-fs25server/
 
