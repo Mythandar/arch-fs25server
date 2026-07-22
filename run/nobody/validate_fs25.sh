@@ -11,7 +11,7 @@ runtime_config="$config/dedicated_server/dedicatedServerConfig.xml"
 
 fail() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 
-[ -d "$prefix" ] || fail "Wine prefix is missing at $prefix. Mount persistent storage at /home/nobody/.fs25server."
+[ -d "$prefix" ] || fail "Wine prefix is missing at $prefix. Persist the Binhex state directory by mounting host storage at /config; do not bind-mount /home/nobody/.fs25server."
 [ -d "$game" ] || fail "Game directory is missing at $game. Check the /opt/fs25/game mount."
 [ -f "$exe" ] || fail "Dedicated server executable is missing at $exe. Do not reinstall until the game mount and Wine symlink are verified."
 [ -f "$server_xml" ] || fail "GIANTS web configuration is missing at $server_xml."
