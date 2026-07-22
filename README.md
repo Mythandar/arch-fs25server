@@ -49,6 +49,11 @@ port `6081`, web port `8000`, and game port `10824`, so the working app remains
 untouched. The production template must not be installed beside the working app
 because it deliberately reuses the live name, paths, and ports.
 
+The side-by-side test keeps its complete FS25 copy on the SSD below
+`/mnt/JailHouse/VirtualMachines/FS25-test`: Binhex state is mounted from the
+dataset root to `/config`, while the `fs25/config`, `fs25/game`, `fs25/dlc`, and
+`fs25/installer` subdirectories are mounted under `/opt/fs25`.
+
 The publishing workflow creates two image tags after every merge to `main`:
 
 - `ghcr.io/mythandar/arch-fs25server:main` for the newest build
