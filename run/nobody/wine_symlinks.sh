@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+export USER="${USER:-nobody}"
 
 # Colors
 RED='\033[0;31m'
@@ -35,8 +39,12 @@ fi
 # ---------------------------------------------------------------------
 # Symlink the host game path inside the Wine prefix
 # ---------------------------------------------------------------------
-if [ -L "$WINE_GAME_DIR" ]; then
-  echo -e "${GREEN}INFO: Game symlink already exists, skipping creation.${NOCOLOR}"
+if [ -L "$WINE_GAME_DIR" ] && [ "$(readlink "$WINE_GAME_DIR")" = "$GAME_DIR" ]; then
+  echo -e "${GREEN}INFO: Game symlink is correct.${NOCOLOR}"
+elif [ -L "$WINE_GAME_DIR" ]; then
+  echo -e "${RED}Warning: Repairing stale game symlink at $WINE_GAME_DIR.${NOCOLOR}"
+  rm "$WINE_GAME_DIR"
+  ln -s "$GAME_DIR" "$WINE_GAME_DIR"
 elif [ -e "$WINE_GAME_DIR" ]; then
   echo -e "${RED}Error: A file or directory already exists at $WINE_GAME_DIR — cannot create symlink.${NOCOLOR}"
 else
@@ -48,8 +56,12 @@ fi
 # ---------------------------------------------------------------------
 # Symlink the host config path inside the Wine prefix
 # ---------------------------------------------------------------------
-if [ -L "$CONFIG_LINK_TARGET" ]; then
-  echo -e "${GREEN}INFO: Config symlink already exists.${NOCOLOR}"
+if [ -L "$CONFIG_LINK_TARGET" ] && [ "$(readlink "$CONFIG_LINK_TARGET")" = "$CONFIG_DIR" ]; then
+  echo -e "${GREEN}INFO: Config symlink is correct.${NOCOLOR}"
+elif [ -L "$CONFIG_LINK_TARGET" ]; then
+  echo -e "${RED}Warning: Repairing stale config symlink at $CONFIG_LINK_TARGET.${NOCOLOR}"
+  rm "$CONFIG_LINK_TARGET"
+  ln -s "$CONFIG_DIR" "$CONFIG_LINK_TARGET"
 elif [ -d "$CONFIG_LINK_TARGET" ]; then
   echo -e "${RED}Warning: A real directory already exists at $CONFIG_LINK_TARGET, skipping symlink creation.${NOCOLOR}"
 else
