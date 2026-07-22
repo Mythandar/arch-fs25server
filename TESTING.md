@@ -41,7 +41,8 @@ Test endpoints use ports that do not collide with the working server:
 - VNC: `5901`
 - noVNC: `http://TRUENAS-IP:6081/vnc.html?resize=remote&autoconnect=1`
 - GIANTS web: `http://TRUENAS-IP:8000`
-- Game: TCP/UDP `10824`
+- Game: host TCP/UDP `10824` forwarded to the server's preserved internal port
+  `10823`
 
 The initial empty-path smoke test is expected to report precise missing-game
 errors until an installer is supplied. It must still bring up VNC/noVNC without
