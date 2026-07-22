@@ -65,7 +65,8 @@ fi
 # container perms
 ####
 
-# define comma separated list of paths
+# Keep the base image permission hook, but do not recursively walk the
+# persistent Wine prefix on every container recreation.
 install_paths="/home/nobody"
 
 # split comma separated string into list for install paths
@@ -101,8 +102,22 @@ previous_pgid=\$(cat "/root/pgid" 2>/dev/null || true)
 # from the previous run then re-apply chown with current PUID and PGID values.
 if [[ ! -f "/root/puid" || ! -f "/root/pgid" || "\${previous_puid}" != "\${PUID}" || "\${previous_pgid}" != "\${PGID}" ]]; then
 
-	# set permissions inside container - Do NOT double quote variable for install_paths otherwise this will wrap space separated paths as a single string
-	chown -R "\${PUID}":"\${PGID}" ${install_paths}
+# Fix the home directory and prefix mountpoint themselves without walking the
+# many thousands of files in the prefix.
+	chown "\${PUID}":"\${PGID}" /home/nobody
+	mkdir -p /home/nobody/.fs25server
+	chown "\${PUID}":"\${PGID}" /home/nobody/.fs25server
+
+# Image-owned home content is small and safe to correct recursively.
+	find /home/nobody -mindepth 1 -maxdepth 1 ! -name .fs25server -exec chown -R "\${PUID}":"\${PGID}" {} +
+
+# A changed UID/GID is the only case that justifies a recursive prefix repair.
+	prefix_marker="/home/nobody/.fs25server/.fs25-owner"
+	if [[ -f "\${prefix_marker}" ]] && [[ "\$(cat "\${prefix_marker}")" != "\${PUID}:\${PGID}" ]]; then
+		echo "[warn] PUID/PGID changed; correcting persistent Wine-prefix ownership once..."
+		chown -R "\${PUID}":"\${PGID}" /home/nobody/.fs25server
+	fi
+	printf '%s:%s\n' "\${PUID}" "\${PGID}" > "\${prefix_marker}"
 
 fi
 
