@@ -1,17 +1,22 @@
 services:
-  arch-fs25server:
-    image: toetje585/arch-fs25server:latest
-    container_name: arch-fs25server
+  fs25-replacement-test:
+    build:
+      context: .
+      args:
+        RELEASETAG: local-test
+        TARGETARCH: amd64
+    image: mythandar/arch-fs25server:2026.07.22-test1
+    container_name: fs25-replacement-test
     environment:
-      - VNC_PASSWORD=fs25server
-      - PUID=1000
-      - PGID=1000
-      - WEB_USERNAME=fs25server
-      - WEB_PASSWORD=fs25server
+      - VNC_PASSWORD=${VNC_PASSWORD:?set VNC_PASSWORD in .env}
+      - PUID=99
+      - PGID=100
+      - WEB_USERNAME=${WEB_USERNAME:?set WEB_USERNAME in .env}
+      - WEB_PASSWORD=${WEB_PASSWORD:?set WEB_PASSWORD in .env}
       - WEB_DARKMODE=false
-      - SERVER_NAME=FS25 Docker
-      - SERVER_PASSWORD=fs25server
-      - SERVER_ADMIN=fs25server
+      - SERVER_NAME=GiggleTown Test
+      - SERVER_PASSWORD=${SERVER_PASSWORD:?set SERVER_PASSWORD in .env}
+      - SERVER_ADMIN=${SERVER_ADMIN:?set SERVER_ADMIN in .env}
       - SERVER_PLAYERS=16
       - SERVER_PORT=10823
       - SERVER_REGION=nl
@@ -24,16 +29,18 @@ services:
       - ENABLE_STARTUP_SCRIPTS=no
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /opt/fs25/config:/opt/fs25/config
-      - /opt/fs25/game:/opt/fs25/game
-      - /opt/fs25/dlc:/opt/fs25/dlc
-      - /opt/fs25/installer:/opt/fs25/installer
+      - /mnt/Main/fs25-test/config:/opt/fs25/config
+      - /mnt/Main/fs25-test/game:/opt/fs25/game
+      - /mnt/Main/fs25-test/dlc:/opt/fs25/dlc
+      - /mnt/Main/fs25-test/installer:/opt/fs25/installer
+      - /mnt/JailHouse/VirtualMachines/FS25-test:/config
     ports:
-      - 5900:5900/tcp
-      - 6080:6080/tcp
-      - 7999:7999/tcp
-      - 10823:10823/tcp
-      - 10823:10823/udp
+      - 5901:5900/tcp
+      - 6081:6080/tcp
+      - 8000:7999/tcp
+      - 10824:10823/tcp
+      - 10824:10823/udp
     cap_add:
       - SYS_NICE
+    stop_grace_period: 2m
     restart: unless-stopped

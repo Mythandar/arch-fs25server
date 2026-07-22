@@ -1,5 +1,29 @@
 # Farming Simulator 25 Docker Server
 
+> Mythandar test fork based on upstream commit
+> `84f0a6a07ee3036366f309ea60cc83c2f5e48313` (2026-07-13). The current
+> production container is intentionally not replaced by this test build.
+
+## Reliability changes in this fork
+
+- Persists the Binhex `/config` directory and never deletes the Wine prefix at
+  `/config/home/.fs25server` (available inside the running container as
+  `/home/nobody/.fs25server`).
+- Repairs game and configuration symlinks idempotently on startup.
+- Defines `USER=nobody` explicitly in every path-sensitive startup script.
+- Avoids recursively changing Wine-prefix ownership on ordinary recreation.
+- Preserves installed GIANTS credentials/configuration instead of overwriting it.
+- Generates VNC web-panel URLs from the current container address.
+- Reports the exact missing executable, configuration, or licence path.
+- Handles termination by asking Wine processes to exit and waiting for them.
+- Includes a Docker health check and a collision-free test compose profile.
+
+See [TESTING.md](TESTING.md) before running the replacement beside production.
+
+Do not bind-mount host storage directly at `/home/nobody/.fs25server`. The
+Binhex initializer owns the `/config/home` to `/home/nobody` relationship; a
+nested mount conflicts with that initialization and can hide `.build/fs25`.
+
 Dedicated Farming Simulator 25 server running inside a docker image based on ArchLinux. 
 This project is hosted at https://github.com/wine-gameservers/arch-fs25server/
 

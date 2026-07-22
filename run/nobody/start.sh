@@ -1,5 +1,9 @@
 #!/usr/bin/dumb-init /bin/bash
 
+set -euo pipefail
+
+export USER="${USER:-nobody}"
+
 # CONFIG_PLACEHOLDER
 
 # create env var for display (note display number must match for tigervnc)
@@ -10,7 +14,7 @@ vnc_start="rm -rf /tmp/.X*; Xvnc :0 -depth 24"
 
 # if a password is specified then generate password file in /home/nobody/.vnc/passwd
 # else append insecure flag to command line
-if [[ -n "${VNC_PASSWORD}" ]]; then
+if [[ -n "${VNC_PASSWORD:-}" ]]; then
 	password_length="${#VNC_PASSWORD}"
 	if [[ "${password_length}" -gt 5 ]]; then
 		echo "[info] Password length OK, proceeding to set password..."
@@ -26,12 +30,12 @@ else
 fi
 
 # if defined then set title for the web ui tab
-if [[ -n "${WEBPAGE_TITLE}" ]]; then
+if [[ -n "${WEBPAGE_TITLE:-}" ]]; then
 	vnc_start="${vnc_start} -Desktop='${WEBPAGE_TITLE}'"
 fi
 
 # Get the container's IP address, excluding the loopback interface
-IP_ADDRESS=$(ip -4 addr show scope global | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+IP_ADDRESS=$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}')
 
 # Check if an IP address was found
 if [ -n "$IP_ADDRESS" ]; then
