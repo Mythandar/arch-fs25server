@@ -9,6 +9,9 @@ ARG RELEASETAG
 # arch from buildx --platform, e.g. amd64
 ARG TARGETARCH
 
+# add Supervisor programs
+ADD build/*.conf /etc/supervisor/conf.d/
+
 # add install bash script
 ADD build/root/*.sh /root/
 

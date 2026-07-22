@@ -55,7 +55,9 @@ touching the live server.
 3. `/config/home/.fs25server/system.reg`, licence files, and
    `/config/home/.fs25-owner` survive recreation.
 4. Game/config symlinks point to `/opt/fs25/game` and `/opt/fs25/config`.
-5. The VNC Webpanel shortcut opens the current container IP automatically.
+5. Supervisor reports `fs25-loopback` running after GIANTS starts, exactly one
+   process listens on `127.0.0.1:7999`, and the VNC Webpanel shortcut opens the
+   localhost URL.
 6. `docker stop -t 120 fs25-replacement-test` allows Wine/FS25 to exit cleanly.
 7. The live `arch-fs25server` container remains running and unchanged.
 
