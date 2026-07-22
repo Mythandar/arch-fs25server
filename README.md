@@ -16,6 +16,8 @@
 - Avoids recursively changing Wine-prefix ownership on ordinary recreation.
 - Preserves installed GIANTS credentials/configuration instead of overwriting it.
 - Generates VNC web-panel URLs from the current container address.
+- Supervises a single loopback proxy from `127.0.0.1:7999` to the dynamically
+  detected GIANTS bridge listener, allowing the VNC shortcut to use localhost.
 - Reports the exact missing executable, configuration, or licence path.
 - Handles termination by asking Wine processes to exit and waiting for them.
 - Includes a Docker health check and a collision-free test compose profile.
@@ -25,6 +27,13 @@ See [TESTING.md](TESTING.md) before running the replacement beside production.
 Do not bind-mount host storage directly at `/home/nobody/.fs25server`. The
 Binhex initializer owns the `/config/home` to `/home/nobody` relationship; a
 nested mount conflicts with that initialization and can hide `.build/fs25`.
+
+The GIANTS web server binds only to the container bridge address. Supervisor
+runs `fs25_loopback_proxy.sh`, which waits for that listener and then starts one
+`socat` proxy bound only to `127.0.0.1:7999`. Supervisor restarts the proxy if it
+fails, while the script refuses to start a duplicate when loopback already
+works. The VNC Webpanel launcher therefore always uses
+`http://127.0.0.1:7999`.
 
 ## TrueNAS Custom App deployment
 
