@@ -102,20 +102,22 @@ previous_pgid=\$(cat "/root/pgid" 2>/dev/null || true)
 # from the previous run then re-apply chown with current PUID and PGID values.
 if [[ ! -f "/root/puid" || ! -f "/root/pgid" || "\${previous_puid}" != "\${PUID}" || "\${previous_pgid}" != "\${PGID}" ]]; then
 
-# Fix the home directory and prefix mountpoint themselves without walking the
-# many thousands of files in the prefix.
-	chown "\${PUID}":"\${PGID}" /home/nobody
-	mkdir -p /home/nobody/.fs25server
-	chown "\${PUID}":"\${PGID}" /home/nobody/.fs25server
+# Binhex persists the complete nobody home below /config/home and links that
+# content into /home/nobody later in init.sh. Work on the persistent source,
+# never on a nested bind mount below /home/nobody.
+	persistent_home="/config/home"
+	prefix="\${persistent_home}/.fs25server"
+	mkdir -p "\${prefix}"
+	chown "\${PUID}":"\${PGID}" /config "\${persistent_home}" "\${prefix}"
 
-# Image-owned home content is small and safe to correct recursively.
-	find /home/nobody -mindepth 1 -maxdepth 1 ! -name .fs25server -exec chown -R "\${PUID}":"\${PGID}" {} +
+# Other persisted home content is small and safe to correct recursively.
+	find "\${persistent_home}" -mindepth 1 -maxdepth 1 ! -name .fs25server -exec chown -R "\${PUID}":"\${PGID}" {} +
 
 # A changed UID/GID is the only case that justifies a recursive prefix repair.
-	prefix_marker="/home/nobody/.fs25server/.fs25-owner"
+	prefix_marker="\${persistent_home}/.fs25-owner"
 	if [[ -f "\${prefix_marker}" ]] && [[ "\$(cat "\${prefix_marker}")" != "\${PUID}:\${PGID}" ]]; then
 		echo "[warn] PUID/PGID changed; correcting persistent Wine-prefix ownership once..."
-		chown -R "\${PUID}":"\${PGID}" /home/nobody/.fs25server
+		chown -R "\${PUID}":"\${PGID}" "\${prefix}"
 	fi
 	printf '%s:%s\n' "\${PUID}" "\${PGID}" > "\${prefix_marker}"
 
