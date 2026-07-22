@@ -316,6 +316,12 @@ fi
 echo -e "${YELLOW}INFO: Checking for updates, if you get warning about gpu drivers make sure to click no!${NOCOLOR}"
 wine ~/.fs25server/drive_c/Program\ Files\ \(x86\)/Farming\ Simulator\ 2025/FarmingSimulator2025.exe
 
+# A fresh GIANTS installation writes its own dedicatedServer.xml (normally on
+# port 8080) after the image templates have already been prepared. Apply the
+# requested web port and credentials without replacing its generated TLS
+# configuration or certificates.
+node /usr/local/bin/configure_web_config.mjs
+
 # Replace VERSION File after update / Create VERSION File after first Install -> fix Version to old error for Future DLCs
 cp /opt/fs25/game/Farming\ Simulator\ 2025/VERSION ${CONFIG_DIR}
 

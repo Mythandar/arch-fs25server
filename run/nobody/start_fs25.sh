@@ -7,6 +7,10 @@ export USER="${USER:-nobody}"
 export WINEDEBUG=-all
 export WINEPREFIX=~/.fs25server
 
+# Keep the installed GIANTS listener aligned with the container's supervised
+# localhost proxy and published port, while preserving existing credentials.
+node /usr/local/bin/configure_web_config.mjs --port-only
+
 /usr/local/bin/validate_fs25.sh runtime
 bash /usr/local/bin/set-web-darkmode.sh
 
