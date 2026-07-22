@@ -18,7 +18,7 @@ services:
       - SERVER_PASSWORD=${SERVER_PASSWORD:?set SERVER_PASSWORD in .env}
       - SERVER_ADMIN=${SERVER_ADMIN:?set SERVER_ADMIN in .env}
       - SERVER_PLAYERS=16
-      - SERVER_PORT=10824
+      - SERVER_PORT=10823
       - SERVER_REGION=nl
       - SERVER_DIFFICULTY=3
       - SERVER_PAUSE=2
@@ -38,8 +38,8 @@ services:
       - 5901:5900/tcp
       - 6081:6080/tcp
       - 8000:7999/tcp
-      - 10824:10824/tcp
-      - 10824:10824/udp
+      - 10824:10823/tcp
+      - 10824:10823/udp
     cap_add:
       - SYS_NICE
     stop_grace_period: 2m
