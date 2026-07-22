@@ -58,11 +58,13 @@ dataset root to `/config`, while the `fs25/config`, `fs25/game`, `fs25/dlc`, and
 
 The publishing workflow creates two image tags after every merge to `main`:
 
-- `ghcr.io/mythandar/arch-fs25server:main` for the newest build
-- `ghcr.io/mythandar/arch-fs25server:sha-<commit>` for an immutable build
+- `ghcr.io/mythandar/arch-fs25server:main` for the newest development build
+- `ghcr.io/mythandar/arch-fs25server:sha-<commit>` for an immutable test build
 
-Use `main` only for the initial test. After a build passes acceptance testing,
-replace `main` in the TrueNAS YAML with its tested `sha-<commit>` tag.
+Production uses `ghcr.io/mythandar/arch-fs25server:stable`. The `stable` tag
+moves only when the manual **Promote stable image** workflow is run with a
+tested immutable `sha-*` tag. Ordinary merges never move `stable`. Test
+deployments should use a specific `sha-*` tag.
 
 Production noVNC access is verified at
 `http://TRUENAS-IP:6080/vnc.html`; the optional
