@@ -1,6 +1,6 @@
 FROM binhex/arch-int-gui:2025122001
 LABEL org.opencontainers.image.authors="Toetje585"
-LABEL org.opencontainers.image.source="https://github.com/winegameservers/arch-fs25server"
+LABEL org.opencontainers.image.source="https://github.com/Mythandar/arch-fs25server"
 LABEL org.opencontainers.image.revision="84f0a6a07ee3036366f309ea60cc83c2f5e48313"
 
 # release tag name from buildx arg
