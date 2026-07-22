@@ -39,8 +39,8 @@ services:
     stop_grace_period: 2m
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /mnt/Main/fs25-test/config:/opt/fs25/config
-      - /mnt/Main/fs25-test/game:/opt/fs25/game
-      - /mnt/Main/fs25-test/dlc:/opt/fs25/dlc
-      - /mnt/Main/fs25-test/installer:/opt/fs25/installer
+      - /mnt/JailHouse/VirtualMachines/FS25-test/fs25/config:/opt/fs25/config
+      - /mnt/JailHouse/VirtualMachines/FS25-test/fs25/game:/opt/fs25/game
+      - /mnt/JailHouse/VirtualMachines/FS25-test/fs25/dlc:/opt/fs25/dlc
+      - /mnt/JailHouse/VirtualMachines/FS25-test/fs25/installer:/opt/fs25/installer
       - /mnt/JailHouse/VirtualMachines/FS25-test:/config
