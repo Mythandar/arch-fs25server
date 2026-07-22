@@ -6,12 +6,12 @@ ports, and host directories.
 
 ## Test paths
 
-Create these empty paths as UID/GID `99:100`:
+Create the SSD-backed test dataset and paths as UID/GID `99:100`:
 
 ```bash
-mkdir -p /mnt/Main/fs25-test/{config,game,dlc,installer}
-mkdir -p /mnt/JailHouse/VirtualMachines/FS25-test
-chown -R 99:100 /mnt/Main/fs25-test /mnt/JailHouse/VirtualMachines/FS25-test
+zfs create JailHouse/VirtualMachines/FS25-test
+mkdir -p /mnt/JailHouse/VirtualMachines/FS25-test/fs25/{config,game,dlc,installer}
+chown -R 99:100 /mnt/JailHouse/VirtualMachines/FS25-test
 ```
 
 The SSD-backed test dataset is mounted at `/config`, not at
@@ -20,10 +20,12 @@ The SSD-backed test dataset is mounted at `/config`, not at
 nested Wine-prefix mount can hide `.build/fs25` and cause an exit-code-2 restart
 loop.
 
-For a realistic test, use TrueNAS/ZFS snapshots and writable clones of the live
-FS25 datasets. Mount the clones at the `fs25-test` paths above. Do not mount the
-live paths into the test container, even read-only, because the GIANTS web files
-and configuration are legitimately modified during operation.
+For a realistic test, copy `game`, `dlc`, and `installer` while the working game
+server runs, then stop the FS25/Wine processes cleanly before copying `config`
+and `/config/home`. Use `rsync --chown=99:100` so the SSD copy has the intended
+container ownership. Do not mount the live paths into the test container, even
+read-only, because the GIANTS web files and configuration are legitimately
+modified during operation.
 
 ## Build and first smoke test
 
