@@ -1,17 +1,39 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+export USER="${USER:-nobody}"
 
 export WINEDEBUG=-all
 export WINEPREFIX=~/.fs25server
 
-# Start the server
+/usr/local/bin/validate_fs25.sh runtime
+bash /usr/local/bin/set-web-darkmode.sh
 
-if [ -f ~/.fs25server/drive_c/Program\ Files\ \(x86\)/Farming\ Simulator\ 2025/dedicatedServer.exe ]
-then
-    bash /usr/local/bin/set-web-darkmode.sh
-    bash /usr/local/bin/patch_web_ip.sh
-    wine ~/.fs25server/drive_c/Program\ Files\ \(x86\)/Farming\ Simulator\ 2025/dedicatedServer.exe & sleep 1 && firefox "http://"$CONTAINER_IP":7999/index.html?lang=en&username="$WEB_USERNAME"&password="$WEB_PASSWORD"&login=Login"
-else
-    echo "Game not installed?" && exit
+WEB_DATA="/opt/fs25/game/Farming Simulator 2025/web_data"
+if [ -d "$WEB_DATA" ]; then
+  (cd "$WEB_DATA" && bash /usr/local/bin/patch_web_ip.sh)
 fi
 
-exit 0
+server_exe="$HOME/.fs25server/drive_c/Program Files (x86)/Farming Simulator 2025/dedicatedServer.exe"
+
+shutdown() {
+  echo "INFO: Shutdown requested; asking Wine processes to exit."
+  wineserver -k || true
+}
+trap shutdown TERM INT HUP
+
+wine "$server_exe" &
+wine_pid=$!
+
+(
+  for _ in $(seq 1 60); do
+    if nc -z "${CONTAINER_IP:-127.0.0.1}" 7999; then
+      /usr/local/bin/open_webinterface.sh >/dev/null 2>&1 || true
+      exit 0
+    fi
+    sleep 1
+  done
+) &
+
+wait "$wine_pid"
