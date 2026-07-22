@@ -9,6 +9,8 @@
 - Persists the Binhex `/config` directory and never deletes the Wine prefix at
   `/config/home/.fs25server` (available inside the running container as
   `/home/nobody/.fs25server`).
+- Initializes Wine once and reruns `wineboot --update` only after the installed
+  Wine version changes, using a marker stored inside the persistent prefix.
 - Repairs game and configuration symlinks idempotently on startup.
 - Defines `USER=nobody` explicitly in every path-sensitive startup script.
 - Avoids recursively changing Wine-prefix ownership on ordinary recreation.
