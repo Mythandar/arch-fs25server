@@ -28,19 +28,8 @@ if [[ $AUTOSTART_SERVER = "true" ]] || [[ $AUTOSTART_SERVER = "web_only" ]]; the
     exit 1
   fi
 
-  # Redirect all incoming traffic on port $WEBSERVER_PORT to the webserver
-  ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | while read line ; do
-    if [ "$line" = "$WEBSERVER_LISTENING_ON" ]; then
-      continue
-    fi
-    echo "Redirecting incoming traffic on $line:$WEBSERVER_PORT to the webserver at $WEBSERVER_LISTENING_ON:$WEBSERVER_PORT"
-    socat tcp-listen:$WEBSERVER_PORT,reuseaddr,fork,bind=$line tcp:${WEBSERVER_LISTENING_ON}:$WEBSERVER_PORT &
-  done
-
-  # Test redirects
-  ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | while read line ; do
-    nc -z $line $WEBSERVER_PORT && echo "Webserver link up $line:$WEBSERVER_PORT" || echo "!! Webserver link failed $line:$WEBSERVER_PORT"
-  done
+  # The Supervisor-managed fs25-loopback program exclusively owns the
+  # 127.0.0.1 proxy. Do not create additional socat listeners here.
 
   # Start Game Server
   if [[ $AUTOSTART_SERVER = "true" ]]; then
