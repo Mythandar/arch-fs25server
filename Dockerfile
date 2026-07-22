@@ -1,14 +1,13 @@
 FROM binhex/arch-int-gui:2025122001
 LABEL org.opencontainers.image.authors="Toetje585"
 LABEL org.opencontainers.image.source="https://github.com/winegameservers/arch-fs25server"
+LABEL org.opencontainers.image.revision="84f0a6a07ee3036366f309ea60cc83c2f5e48313"
 
 # release tag name from buildx arg
 ARG RELEASETAG
 
 # arch from buildx --platform, e.g. amd64
 ARG TARGETARCH
-
-ADD build/*.conf /etc/supervisor/conf.d/
 
 # add install bash script
 ADD build/root/*.sh /root/
@@ -50,6 +49,9 @@ ENV TERM=xterm
 
 # set environment variables for language
 ENV LANG=en_GB.UTF-8
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=3m --retries=5 \
+  CMD ["/usr/local/bin/healthcheck_fs25.sh"]
 
 # set permissions
 #################
