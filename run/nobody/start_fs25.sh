@@ -28,7 +28,7 @@ wine_pid=$!
 
 (
   for _ in $(seq 1 60); do
-    if nc -z "${CONTAINER_IP:-127.0.0.1}" 7999; then
+    if nc -z 127.0.0.1 7999; then
       /usr/local/bin/open_webinterface.sh >/dev/null 2>&1 || true
       exit 0
     fi
