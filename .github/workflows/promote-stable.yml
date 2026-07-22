@@ -1,0 +1,49 @@
+name: Promote stable image
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_tag:
+        description: Immutable sha-* image tag to promote
+        required: true
+        default: sha-153a795
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: promote-stable
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate immutable source tag
+        env:
+          SOURCE_TAG: ${{ inputs.source_tag }}
+        run: |
+          if [[ ! "$SOURCE_TAG" =~ ^sha-[0-9a-f]{7,40}$ ]]; then
+            echo "Source tag must match sha- followed by 7 to 40 lowercase hexadecimal characters."
+            exit 1
+          fi
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Promote tested image without rebuilding
+        env:
+          SOURCE_TAG: ${{ inputs.source_tag }}
+        run: |
+          docker buildx imagetools create \
+            --tag ghcr.io/mythandar/arch-fs25server:stable \
+            "ghcr.io/mythandar/arch-fs25server:$SOURCE_TAG"
+
+      - name: Verify stable manifest
+        run: docker buildx imagetools inspect ghcr.io/mythandar/arch-fs25server:stable

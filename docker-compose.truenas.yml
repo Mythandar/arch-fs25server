@@ -5,7 +5,7 @@
 
 services:
   arch-fs25server:
-    image: ghcr.io/mythandar/arch-fs25server:sha-153a795
+    image: ghcr.io/mythandar/arch-fs25server:stable
     container_name: fs25-server
     cap_add:
       - SYS_NICE
