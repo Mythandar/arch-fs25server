@@ -41,12 +41,21 @@ pacman -Sy
 source upd.sh
 
 # define pacman packages
-pacman_packages="wine samba exo garcon thunar xfce4-appfinder tumbler xfce4-panel xfce4-session xfce4-settings xfce4-terminal xfconf xfdesktop xfwm4 nodejs npm socat 7zip"
+pacman_packages="wine samba exo garcon thunar xfce4-appfinder tumbler xfce4-panel xfce4-session xfce4-settings xfce4-terminal xfconf xfdesktop xfwm4 tigervnc nodejs npm socat 7zip"
 
 
 # install compiled packages using pacman
 if [[ ! -z "${pacman_packages}" ]]; then
 	pacman -S --needed $pacman_packages --noconfirm
+fi
+
+# The GUI base already contains TigerVNC, but its binary can be older than a
+# newly upgraded nettle/hogweed ABI.  Keep it in the transaction above and
+# reject the image during the build if Xvnc still has an unresolved library.
+if ldd "$(command -v Xvnc)" | grep -q 'not found'; then
+	echo "[crit] Xvnc has unresolved shared-library dependencies:"
+	ldd "$(command -v Xvnc)"
+	exit 1
 fi
 
 
