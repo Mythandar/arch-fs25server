@@ -1,12 +1,12 @@
 # TrueNAS Custom App production template.
 # Replace every CHANGE_ME value in the TrueNAS YAML editor before deployment.
 # Do not run this beside the existing production app: it intentionally uses the
-# production container name, ports, and storage paths for eventual cutover.
+# verified production container name, ports, and SSD-backed storage paths.
 
 services:
   arch-fs25server:
-    image: ghcr.io/mythandar/arch-fs25server:main
-    container_name: arch-fs25server
+    image: ghcr.io/mythandar/arch-fs25server:sha-153a795
+    container_name: fs25-server
     cap_add:
       - SYS_NICE
     environment:
@@ -26,7 +26,7 @@ services:
       - SERVER_SAVE_INTERVAL=180.000000
       - SERVER_STATS_INTERVAL=31536000
       - SERVER_CROSSPLAY=true
-      - AUTOSTART_SERVER=false
+      - AUTOSTART_SERVER=true
       - ENABLE_STARTUP_SCRIPTS=no
       - PUID=99
       - PGID=100
@@ -40,8 +40,8 @@ services:
     stop_grace_period: 2m
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /mnt/Main/fs25/config:/opt/fs25/config
-      - /mnt/Main/fs25/game:/opt/fs25/game
-      - /mnt/Main/fs25/dlc:/opt/fs25/dlc
-      - /mnt/Main/fs25/installer:/opt/fs25/installer
-      - /mnt/JailHouse/VirtualMachines/FS25:/config
+      - /mnt/JailHouse/VirtualMachines/FS25-test/fs25/config:/opt/fs25/config
+      - /mnt/JailHouse/VirtualMachines/FS25-test/fs25/game:/opt/fs25/game
+      - /mnt/JailHouse/VirtualMachines/FS25-test/fs25/dlc:/opt/fs25/dlc
+      - /mnt/JailHouse/VirtualMachines/FS25-test/fs25/installer:/opt/fs25/installer
+      - /mnt/JailHouse/VirtualMachines/FS25-test:/config

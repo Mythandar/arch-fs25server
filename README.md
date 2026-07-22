@@ -1,8 +1,8 @@
 # Farming Simulator 25 Docker Server
 
-> Mythandar test fork based on upstream commit
-> `84f0a6a07ee3036366f309ea60cc83c2f5e48313` (2026-07-13). The current
-> production container is intentionally not replaced by this test build.
+> Mythandar production fork based on upstream commit
+> `84f0a6a07ee3036366f309ea60cc83c2f5e48313` (2026-07-13). The verified
+> TrueNAS production image is `ghcr.io/mythandar/arch-fs25server:sha-153a795`.
 
 ## Reliability changes in this fork
 
@@ -20,7 +20,9 @@
   detected GIANTS bridge listener, allowing the VNC shortcut to use localhost.
 - Reports the exact missing executable, configuration, or licence path.
 - Handles termination by asking Wine processes to exit and waiting for them.
-- Includes a Docker health check and a collision-free test compose profile.
+- Includes a Docker health check that does not probe the raw VNC authentication
+  port, preventing TigerVNC from blacklisting the noVNC localhost connection.
+- Includes separate production and collision-free test Compose profiles.
 
 See [TESTING.md](TESTING.md) before running the replacement beside production.
 
@@ -61,6 +63,10 @@ The publishing workflow creates two image tags after every merge to `main`:
 
 Use `main` only for the initial test. After a build passes acceptance testing,
 replace `main` in the TrueNAS YAML with its tested `sha-<commit>` tag.
+
+Production noVNC access is verified at
+`http://TRUENAS-IP:6080/vnc.html`; the optional
+`?autoconnect=true&resize=scale` query also works.
 
 Before installing the YAML, replace all `CHANGE_ME` values in the TrueNAS editor.
 VNC passwords shorter than six characters are rejected by the image and result
