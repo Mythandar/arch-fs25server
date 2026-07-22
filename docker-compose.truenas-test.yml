@@ -1,0 +1,46 @@
+# TrueNAS Custom App test template.
+# Safe to install beside the existing arch-fs25server app after the separate
+# fs25-test datasets have been prepared.
+
+services:
+  fs25-replacement-test:
+    image: ghcr.io/mythandar/arch-fs25server:main
+    container_name: fs25-replacement-test
+    cap_add:
+      - SYS_NICE
+    environment:
+      - VNC_PASSWORD=CHANGE_ME_MINIMUM_6_CHARACTERS
+      - WEB_USERNAME=Mythandar
+      - WEB_PASSWORD=CHANGE_ME
+      - WEB_DARKMODE=true
+      - SERVER_NAME=GiggleTown Test
+      - SERVER_PASSWORD=CHANGE_ME
+      - SERVER_ADMIN=CHANGE_ME
+      - SERVER_PLAYERS=4
+      - SERVER_PORT=10823
+      - SERVER_REGION=en
+      - SERVER_MAP=MapUS
+      - SERVER_DIFFICULTY=3
+      - SERVER_PAUSE=2
+      - SERVER_SAVE_INTERVAL=180.000000
+      - SERVER_STATS_INTERVAL=31536000
+      - SERVER_CROSSPLAY=true
+      - AUTOSTART_SERVER=false
+      - ENABLE_STARTUP_SCRIPTS=no
+      - PUID=99
+      - PGID=100
+    ports:
+      - 5952:5900/tcp
+      - 6081:6080/tcp
+      - 8000:7999/tcp
+      - 10824:10823/tcp
+      - 10824:10823/udp
+    restart: unless-stopped
+    stop_grace_period: 2m
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /mnt/Main/fs25-test/config:/opt/fs25/config
+      - /mnt/Main/fs25-test/game:/opt/fs25/game
+      - /mnt/Main/fs25-test/dlc:/opt/fs25/dlc
+      - /mnt/Main/fs25-test/installer:/opt/fs25/installer
+      - /mnt/JailHouse/VirtualMachines/FS25-test:/config

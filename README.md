@@ -31,6 +31,13 @@ The final server is deployed through the TrueNAS Apps GUI using
 prebuilt image from GitHub Container Registry; TrueNAS does not need the source
 tree or a local `build:` context.
 
+Use [`docker-compose.truenas-test.yml`](docker-compose.truenas-test.yml) for the
+first TrueNAS Apps GUI deployment. It uses the separate
+`fs25-replacement-test` container, `fs25-test` datasets, VNC port `5952`, noVNC
+port `6081`, web port `8000`, and game port `10824`, so the working app remains
+untouched. The production template must not be installed beside the working app
+because it deliberately reuses the live name, paths, and ports.
+
 The publishing workflow creates two image tags after every merge to `main`:
 
 - `ghcr.io/mythandar/arch-fs25server:main` for the newest build
